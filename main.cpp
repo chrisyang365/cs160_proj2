@@ -14,11 +14,11 @@ int main(int argc, char *argv[])
         {
             Scanner scanner;
             Token t;
-            std::cout << "here" << std::endl;
 
             std::string result = "";
             while ((t = scanner.nextToken()) != T_EOF)
             {
+                std::cout << "this is the token: " << tokenToString(scanner.getCurrToken()) << std::endl;
                 if (t == T_SEMICOLON)
                 {
                     scanner.eatToken(t);
