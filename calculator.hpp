@@ -20,7 +20,6 @@ public:
     void eatToken(Token);
     int lineNumber();
     int getNumberValue();
-    Token getCurrToken();
 
     Scanner();
 };
@@ -31,11 +30,20 @@ public:
 class Parser
 {
     Scanner scanner;
+    Token lookahead;
 
     bool evaluate;
     void start();
-    // You will need to define the recursive descent functions you're going to use here.
-    // WRITEME
+    void match(Token token);
+    void L();
+    void E();
+    void R();
+    void EPrime();
+    void T();
+    void TPrime();
+    void F();
+    void FPrime();
+
 public:
     void parse();
 

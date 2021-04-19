@@ -161,17 +161,13 @@ int Scanner::getNumberValue()
     return this->value;
 }
 
-Token Scanner::getCurrToken()
-{
-    return this->currToken;
-}
-
 // Parser implementation
 
 // You may need to modify this constructor and make it do stuff, although it might not be neccessary.
 Parser::Parser(bool eval) : evaluate(eval)
 {
-    // WRITEME
+    Scanner newScanner;
+    this->scanner = newScanner;
 }
 
 void Parser::parse()
@@ -185,8 +181,107 @@ void Parser::start()
     // Depending on how you designed your grammar, how many levels of operator precedence you need, etc., you might end up with more
     // or less steps in the process.
     //
-    // WRITEME
+    L();
 }
 
-// You will need to add more methods for this to work. Don't forget to also define them in calculator.hpp!
-// WRITEME
+void Parser::match(Token token)
+{
+    if (this->scanner.nextToken() == token)
+    {
+        this->scanner.eatToken(token);
+    }
+    else
+    {
+        parseError(this->scanner.lineNumber(), token);
+    }
+}
+
+void Parser::L()
+{
+    E();
+    R();
+}
+
+void Parser::R()
+{
+    switch(this->scanner.nextToken())
+    {
+        case T_SEMICOLON:
+            match(T_SEMICOLON);
+            E();
+            R();
+        case T_EOF:
+            this->scanner.eatToken(T_EOF);
+        default:
+            parseError(this->scanner.lineNumber(), this->scanner.nextToken());
+    }
+}
+
+void Parser::E()
+{
+    T();
+    EPrime();
+}
+
+void Parser::EPrime()
+{
+    switch(this->scanner.nextToken())
+    {
+        case T_PLUS:
+            match(T_PLUS);
+            T();
+            EPrime();
+        case T_MINUS:
+            match(T_MINUS);
+            T();
+            EPrime();
+        case T_EOF:
+            this->scanner.eatToken(T_EOF);
+        default:
+            parseError(this->scanner.lineNumber(), this->scanner.nextToken());
+    }
+}
+
+void Parser::T()
+{
+    F();
+    TPrime();
+}
+
+void Parser::TPrime()
+{
+    switch (this->scanner.nextToken())
+    {
+        case T_MULTIPLY:
+            match(T_MULTIPLY);
+            F();
+            TPrime();
+        case T_DIVIDE:
+            match(T_DIVIDE);
+            F();
+            TPrime();
+        case T_MODULO:
+            match(T_MODULO);
+            F();
+            TPrime();
+        case T_EOF:
+            this->scanner.eatToken(T_EOF);
+        default:
+            parseError(this->scanner.lineNumber(), this->scanner.nextToken());
+    }
+}
+
+void Parser::F()
+{
+    switch (this->scanner.nextToken())
+    {
+        case T_NUMBER:
+            match(T_NUMBER);
+        case T_OPENPAREN:
+            match(T_OPENPAREN);
+            E();
+            match(T_CLOSEPAREN);
+        default:
+            parseError(this->scanner.lineNumber(), this->scanner.nextToken());
+    }
+}

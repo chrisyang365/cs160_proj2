@@ -10,32 +10,32 @@ prepare do
 	# to :eval, "-e"
 end
 
-doing :scan do
-	pass "3+2", "number3 + number2"
-	pass "2+4*3+3", "number2 + number4 * number3 + number3"
-	pass "2+4mod3+(2+5)", "number2 + number4 mod number3 + ( number2 + number5 )"
-	pass "111*22", "number111 * number22"
-	pass "((((((4+2)*3)+4)/5)mod6)+1)", "( ( ( ( ( ( number4 + number2 ) * number3 ) + number4 ) / number5 ) mod number6 ) + number1 )"
-	pass "3+2()", "number3 + number2 ( )"
-	pass "3++", "number3 + +"
-	fail "r+3", "Scan error: found invalid character r at line 1"
-	fail "3+2a", "Scan error: found invalid character a at line 1"
-	fail "4^2+2", "Scan error: found invalid character ^ at line 1"
-	fail "5med2","Scan error: found invalid character e at line 1"
-
-end
-
-# doing :parse do
-# 	pass "2+4*3+3", ""
-# 	pass "2+4mod3+(2+5)", ""
-# 	pass "111*22", ""
-# 	pass "((((((4+2)*3)+4)/5)mod6)+1)", ""
-# 	pass "3+2;5+4", ""
-# 	fail "()", "Parse error: found invalid token ) at line 1"
-# 	fail "(1+2", "Parse error: expected ) found EOF at line 1"
-# 	fail "3++", "Parse error: found invalid token + at line 1"
+# doing :scan do
+# 	pass "3+2", "number3 + number2"
+# 	pass "2+4*3+3", "number2 + number4 * number3 + number3"
+# 	pass "2+4mod3+(2+5)", "number2 + number4 mod number3 + ( number2 + number5 )"
+# 	pass "111*22", "number111 * number22"
+# 	pass "((((((4+2)*3)+4)/5)mod6)+1)", "( ( ( ( ( ( number4 + number2 ) * number3 ) + number4 ) / number5 ) mod number6 ) + number1 )"
+# 	pass "3+2()", "number3 + number2 ( )"
+# 	pass "3++", "number3 + +"
+# 	fail "r+3", "Scan error: found invalid character r at line 1"
+# 	fail "3+2a", "Scan error: found invalid character a at line 1"
+# 	fail "4^2+2", "Scan error: found invalid character ^ at line 1"
+# 	fail "5med2","Scan error: found invalid character e at line 1"
 
 # end
+
+doing :parse do
+	pass "2+4*3+3", ""
+	# pass "2+4mod3+(2+5)", ""
+	# pass "111*22", ""
+	# pass "((((((4+2)*3)+4)/5)mod6)+1)", ""
+	# pass "3+2;5+4", ""
+	# fail "()", "Parse error: found invalid token ) at line 1"
+	# fail "(1+2", "Parse error: expected ) found EOF at line 1"
+	# fail "3++", "Parse error: found invalid token + at line 1"
+
+end
 
 # doing :eval do
 # 	pass "((2+43)mod6+12)/3; (2*3*2*19)mod8", "5\n4"
