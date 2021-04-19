@@ -22,15 +22,13 @@ char findFirstCharDiff(std::string s1)
 // Scanner implementation
 
 // You may have to modify this constructor, although it might not be neccessary.
-Scanner::Scanner() : line(0),
+Scanner::Scanner() : line(1),
                      value(0),
                      tokenSet(false),
                      currToken(T_EOF)
 {
     // WRITEME
-    std::string dummy;
-    std::cin >> dummy;
-    std::cout << "this is dummy:" << dummy << "---" << std::endl;
+    std::cin.peek();
 }
 
 // You need to fill this method with the appropriate code for it to work as described in the project description.
@@ -38,25 +36,17 @@ Token Scanner::nextToken()
 {
     if (this->tokenSet)
     {
-        std::cout << "token set " << std::endl;
         return this->currToken;
     }
-
-    char c = std::cin.peek();
-    std::string actual;
-    std::cin >> actual;
-    std::cout << "this is actual:" << actual << "---" << std::endl;
-    std::cout << "this is what I peeked: " << c << std::endl;
-    if (c == EOF)
+    char c = (std::cin >> std::ws).peek();
+    if (c == std::char_traits<char>::eof())
     {
-        std::cout << "token set " << std::endl;
         this->currToken = T_EOF;
         this->tokenSet = true;
         return T_EOF;
     }
     if (std::isdigit(c))
     {
-        std::cout << "token set " << std::endl;
         int n;
         std::cin >> n;
         this->value = n;
@@ -67,62 +57,70 @@ Token Scanner::nextToken()
 
     if (c == '(')
     {
-        std::cout << "token set " << std::endl;
+        char temp;
+        std::cin >> std::setw(1) >> temp;
         this->currToken = T_OPENPAREN;
         this->tokenSet = true;
         return T_OPENPAREN;
     }
     if (c == ')')
     {
-        std::cout << "token set " << std::endl;
+        char temp;
+        std::cin >> std::setw(1) >> temp;
         this->currToken = T_CLOSEPAREN;
         this->tokenSet = true;
         return T_CLOSEPAREN;
     }
     if (c == '+')
     {
-        std::cout << "token set " << std::endl;
+        char temp;
+        std::cin >> std::setw(1) >> temp;
         this->currToken = T_PLUS;
         this->tokenSet = true;
         return T_PLUS;
     }
     if (c == '-')
     {
-        std::cout << "token set " << std::endl;
+        char temp;
+        std::cin >> std::setw(1) >> temp;
         this->currToken = T_MINUS;
         this->tokenSet = true;
         return T_MINUS;
     }
     if (c == '*')
     {
-        std::cout << "token set " << std::endl;
+        char temp;
+        std::cin >> std::setw(1) >> temp;
         this->currToken = T_MULTIPLY;
         this->tokenSet = true;
         return T_MULTIPLY;
     }
     if (c == '/')
     {
-        std::cout << "token set " << std::endl;
+        char temp;
+        std::cin >> std::setw(1) >> temp;
         this->currToken = T_DIVIDE;
         this->tokenSet = true;
         return T_DIVIDE;
     }
     if (c == ';')
     {
-        std::cout << "token set " << std::endl;
+        char temp;
+        std::cin >> std::setw(1) >> temp;
         this->currToken = T_SEMICOLON;
         this->tokenSet = true;
         return T_SEMICOLON;
     }
     if (c == '\n')
     {
+        char temp;
+        std::cin >> std::setw(1) >> temp;
         this->currToken = T_NEWLN;
         this->tokenSet = true;
         return T_NEWLN;
     }
     if (c == 'm')
     {
-        std::cout << "token set " << std::endl;
         std::string input;
         std::cin >> std::setw(3) >> input;
         if (input.compare("mod") != 0)
@@ -137,7 +135,7 @@ Token Scanner::nextToken()
             return T_MODULO;
         }
     }
-    std::cout << "token not set " << std::endl;
+    scanError(this->line, c);
 }
 
 // You need to fill this method with the appropriate code for it to work as described in the project description.

@@ -18,7 +18,6 @@ int main(int argc, char *argv[])
             std::string result = "";
             while ((t = scanner.nextToken()) != T_EOF)
             {
-                std::cout << "this is the token: " << tokenToString(scanner.getCurrToken()) << std::endl;
                 if (t == T_SEMICOLON)
                 {
                     scanner.eatToken(t);
