@@ -28,6 +28,9 @@ Scanner::Scanner() : line(1),
                      currToken(T_EOF)
 {
     // WRITEME
+    // std::string junk;
+    // std::cin >> std::setw(2) >> junk;
+    // std::cout << "this is junk " << junk;
     std::cin.peek();
 }
 
@@ -188,10 +191,12 @@ void Parser::match(Token token)
 {
     if (this->scanner.nextToken() == token)
     {
+        std::cout << "matched token " << tokenToString(token);
         this->scanner.eatToken(token);
     }
     else
     {
+        // std::cout << "scanner token: " << tokenToString(this->scanner.nextToken());
         parseError(this->scanner.lineNumber(), token);
     }
 }
@@ -204,16 +209,18 @@ void Parser::L()
 
 void Parser::R()
 {
-    switch(this->scanner.nextToken())
+    switch (this->scanner.nextToken())
     {
-        case T_SEMICOLON:
-            match(T_SEMICOLON);
-            E();
-            R();
-        case T_EOF:
-            this->scanner.eatToken(T_EOF);
-        default:
-            parseError(this->scanner.lineNumber(), this->scanner.nextToken());
+    case T_SEMICOLON:
+        match(T_SEMICOLON);
+        E();
+        R();
+        break;
+    case T_EOF:
+        this->scanner.eatToken(T_EOF);
+        break;
+    default:
+        parseError(this->scanner.lineNumber(), this->scanner.nextToken());
     }
 }
 
@@ -225,20 +232,23 @@ void Parser::E()
 
 void Parser::EPrime()
 {
-    switch(this->scanner.nextToken())
+    switch (this->scanner.nextToken())
     {
-        case T_PLUS:
-            match(T_PLUS);
-            T();
-            EPrime();
-        case T_MINUS:
-            match(T_MINUS);
-            T();
-            EPrime();
-        case T_EOF:
-            this->scanner.eatToken(T_EOF);
-        default:
-            parseError(this->scanner.lineNumber(), this->scanner.nextToken());
+    case T_PLUS:
+        match(T_PLUS);
+        T();
+        EPrime();
+        break;
+    case T_MINUS:
+        match(T_MINUS);
+        T();
+        EPrime();
+        break;
+    case T_EOF:
+        this->scanner.eatToken(T_EOF);
+        break;
+    default:
+        parseError(this->scanner.lineNumber(), this->scanner.nextToken());
     }
 }
 
@@ -252,22 +262,26 @@ void Parser::TPrime()
 {
     switch (this->scanner.nextToken())
     {
-        case T_MULTIPLY:
-            match(T_MULTIPLY);
-            F();
-            TPrime();
-        case T_DIVIDE:
-            match(T_DIVIDE);
-            F();
-            TPrime();
-        case T_MODULO:
-            match(T_MODULO);
-            F();
-            TPrime();
-        case T_EOF:
-            this->scanner.eatToken(T_EOF);
-        default:
-            parseError(this->scanner.lineNumber(), this->scanner.nextToken());
+    case T_MULTIPLY:
+        match(T_MULTIPLY);
+        F();
+        TPrime();
+        break;
+    case T_DIVIDE:
+        match(T_DIVIDE);
+        F();
+        TPrime();
+        break;
+    case T_MODULO:
+        match(T_MODULO);
+        F();
+        TPrime();
+        break;
+    case T_EOF:
+        this->scanner.eatToken(T_EOF);
+        break;
+    default:
+        parseError(this->scanner.lineNumber(), this->scanner.nextToken());
     }
 }
 
@@ -275,13 +289,15 @@ void Parser::F()
 {
     switch (this->scanner.nextToken())
     {
-        case T_NUMBER:
-            match(T_NUMBER);
-        case T_OPENPAREN:
-            match(T_OPENPAREN);
-            E();
-            match(T_CLOSEPAREN);
-        default:
-            parseError(this->scanner.lineNumber(), this->scanner.nextToken());
+    case T_NUMBER:
+        match(T_NUMBER);
+        break;
+    case T_OPENPAREN:
+        match(T_OPENPAREN);
+        E();
+        match(T_CLOSEPAREN);
+        break;
+    default:
+        parseError(this->scanner.lineNumber(), this->scanner.nextToken());
     }
 }
