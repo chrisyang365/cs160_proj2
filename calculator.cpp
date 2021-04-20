@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <cctype>
 #include <algorithm>
+#include <stack>
 char findFirstCharDiff(std::string s1)
 {
     std::string expected = "mod";
@@ -175,7 +176,10 @@ Parser::Parser(bool eval) : evaluate(eval)
 
 void Parser::parse()
 {
-    start();
+    if (this->evaluate)
+        evalProgram();
+    else
+        start();
 }
 
 void Parser::start()
@@ -219,7 +223,7 @@ void Parser::R()
     case T_EOF:
         this->scanner.eatToken(T_EOF);
         break;
-    //default:
+        //default:
         //parseError(this->scanner.lineNumber(), this->scanner.nextToken());
     }
 }
@@ -247,7 +251,7 @@ void Parser::EPrime()
     case T_EOF:
         this->scanner.eatToken(T_EOF);
         break;
-    //default:
+        //default:
         //parseError(this->scanner.lineNumber(), this->scanner.nextToken());
     }
 }
@@ -280,7 +284,7 @@ void Parser::TPrime()
     case T_EOF:
         this->scanner.eatToken(T_EOF);
         break;
-    //default:
+        //default:
         //parseError(this->scanner.lineNumber(), this->scanner.nextToken());
     }
 }
@@ -300,4 +304,98 @@ void Parser::F()
     default:
         parseError(this->scanner.lineNumber(), this->scanner.nextToken());
     }
+}
+
+void Parser::evalProgram()
+{
+    std::stack<int> numBuffer;
+    std::stack<Token> opBuffer;
+
+    while (this->scanner.nextToken() != T_EOF)
+    {
+        Token t = this->scanner.nextToken();
+        if (t == T_NUMBER)
+        {
+            numBuffer.push(this->scanner.getNumberValue());
+        }
+        else if (t == T_OPENPAREN)
+        {
+            opBuffer.push(t);
+        }
+        else if (t == T_CLOSEPAREN)
+        {
+            while (opBuffer.top() != T_OPENPAREN)
+            {
+                int x = numBuffer.top();
+                numBuffer.pop();
+                int y = numBuffer.top();
+                numBuffer.pop();
+
+                Token opToken = opBuffer.top();
+                opBuffer.pop();
+
+                int innerExpression = arithmetic(x, y, opToken);
+                numBuffer.push(innerExpression);
+            }
+            opBuffer.pop();
+        }
+        else
+        {
+            while (!opBuffer.empty() && hasPrecedence(t, opBuffer.top()))
+            {
+                int x = numBuffer.top();
+                numBuffer.pop();
+                int y = numBuffer.top();
+                numBuffer.pop();
+
+                Token opToken = opBuffer.top();
+                opBuffer.pop();
+
+                int innerExpression = arithmetic(x, y, opToken);
+                numBuffer.push(innerExpression);
+            }
+            opBuffer.push(t);
+        }
+        this->scanner.eatToken(t);
+    }
+    while (!opBuffer.empty())
+    {
+        int x = numBuffer.top();
+        numBuffer.pop();
+        int y = numBuffer.top();
+        numBuffer.pop();
+
+        Token opToken = opBuffer.top();
+        opBuffer.pop();
+
+        int innerExpression = arithmetic(x, y, opToken);
+        numBuffer.push(innerExpression);
+    }
+    std::cout << numBuffer.top();
+}
+
+int Parser::arithmetic(int x, int y, Token opToken)
+{
+    switch (opToken)
+    {
+    case T_PLUS:
+        return y + x;
+    case T_MINUS:
+        return y - x;
+    case T_MULTIPLY:
+        return y * x;
+    case T_DIVIDE:
+        return y / x;
+    case T_MODULO:
+        return y % x;
+    }
+}
+
+bool Parser::hasPrecedence(Token opToken1, Token opToken2)
+{
+    if (opToken2 == T_OPENPAREN || opToken2 == T_CLOSEPAREN)
+        return false;
+    if ((opToken2 == T_PLUS || opToken2 == T_MINUS) && (opToken1 == T_MULTIPLY || opToken1 == T_DIVIDE || opToken1 == T_MODULO))
+        return false;
+    return true;
 }

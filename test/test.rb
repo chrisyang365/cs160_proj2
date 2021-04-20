@@ -37,22 +37,22 @@ doing :parse do
 
 end
 
-# doing :eval do
-# 	pass "((2+43)mod6+12)/3; (2*3*2*19)mod8", "5\n4"
-# 	pass "22*2-(9*5-5)", "4"
-# 	pass "18*4-22mod3", "71"
-# 	pass "(14mod  10)*184; 14 mod10/2; 14mod(10*10)", "736\n2\n14"
-# 	pass "44*44*2mod33mod10", "1"
-# 	pass "0-(180*180mod454-(10*10*2-(2*2+2)*5))", "4"
-# 	pass "81mod3+10/3*3mod3", "0"
-# 	pass "5+2mod3+22*7+(16+(2*4))", "185"
-# 	pass "5+8mod(0-3)","7"
-# 	fail "1534893*5555550", "Semantic error: number 8527174806150 out of bounds at line 1"
-# 	fail "1/2;\n3/0", "Semantic error: dividing 3 with zero at line 2"
-# 	fail "3+3;\n3/(3-3)", "Semantic error: dividing 3 with zero at line 2"
-# 	fail "1/1;\n0/0", "Semantic error: dividing 0 with zero at line 2"
+doing :eval do
+	# pass "((2+43)mod6+12)/3; (2*3*2*19)mod8", "5\n4"
+	pass "22*2-(9*5-5)", "4"
+	pass "18*4-22mod3", "71"
+	# pass "(14mod  10)*184; 14 mod10/2; 14mod(10*10)", "736\n2\n14"
+	pass "44*44*2mod33mod10", "1"
+	pass "0-(180*180mod454-(10*10*2-(2*2+2)*5))", "4"
+	pass "81mod3+10/3*3mod3", "0"
+	pass "5+2mod3+22*7+(16+(2*4))", "185"
+	pass "5+8mod(0-3)","7"
+	# fail "1534893*5555550", "Semantic error: number 8527174806150 out of bounds at line 1"
+	# fail "1/2;\n3/0", "Semantic error: dividing 3 with zero at line 2"
+	# fail "3+3;\n3/(3-3)", "Semantic error: dividing 3 with zero at line 2"
+	# fail "1/1;\n0/0", "Semantic error: dividing 0 with zero at line 2"
 
-# end
+end
 
 
 
