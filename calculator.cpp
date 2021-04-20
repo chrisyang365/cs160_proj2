@@ -28,10 +28,6 @@ Scanner::Scanner() : line(1),
                      tokenSet(false),
                      currToken(T_EOF)
 {
-    // WRITEME
-    // std::string junk;
-    // std::cin >> std::setw(2) >> junk;
-    // std::cout << "this is junk " << junk;
     std::cin.peek();
 }
 
@@ -123,15 +119,6 @@ Token Scanner::nextToken()
         this->tokenSet = true;
         return T_SEMICOLON;
     }
-    if (newLine == '\n')
-    {
-        std::cout << "here";
-        char temp;
-        std::cin >> std::setw(1) >> temp;
-        this->currToken = T_NEWLN;
-        this->tokenSet = true;
-        return T_NEWLN;
-    }
     if (c == 'm')
     {
         std::string input;
@@ -206,12 +193,10 @@ void Parser::match(Token token)
 {
     if (this->scanner.nextToken() == token)
     {
-        // std::cout << "matched token " << tokenToString(token);
         this->scanner.eatToken(token);
     }
     else
     {
-        // std::cout << "scanner token: " << tokenToString(this->scanner.nextToken());
         mismatchError(this->scanner.lineNumber(), token, this->scanner.nextToken());
     }
 }
@@ -234,8 +219,6 @@ void Parser::R()
     case T_EOF:
         this->scanner.eatToken(T_EOF);
         break;
-        //default:
-        //parseError(this->scanner.lineNumber(), this->scanner.nextToken());
     }
 }
 
@@ -262,8 +245,6 @@ void Parser::EPrime()
     case T_EOF:
         this->scanner.eatToken(T_EOF);
         break;
-        //default:
-        //parseError(this->scanner.lineNumber(), this->scanner.nextToken());
     }
 }
 
@@ -295,8 +276,6 @@ void Parser::TPrime()
     case T_EOF:
         this->scanner.eatToken(T_EOF);
         break;
-        //default:
-        //parseError(this->scanner.lineNumber(), this->scanner.nextToken());
     }
 }
 
