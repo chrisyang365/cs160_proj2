@@ -148,6 +148,8 @@ void Scanner::eatToken(Token toConsume)
     if (this->currToken == toConsume)
     {
         this->tokenSet = false;
+        if (toConsume == T_NEWLN)
+            this->line += 1;
     }
     else
     {
@@ -308,70 +310,90 @@ void Parser::F()
 
 void Parser::evalProgram()
 {
-    std::stack<int> numBuffer;
-    std::stack<Token> opBuffer;
-
+    std::string result = "";
     while (this->scanner.nextToken() != T_EOF)
     {
-        Token t = this->scanner.nextToken();
-        if (t == T_NUMBER)
+        std::stack<int> numBuffer;
+        std::stack<Token> opBuffer;
+        while (this->scanner.nextToken() != T_SEMICOLON && this->scanner.nextToken() != T_EOF)
         {
-            numBuffer.push(this->scanner.getNumberValue());
-        }
-        else if (t == T_OPENPAREN)
-        {
-            opBuffer.push(t);
-        }
-        else if (t == T_CLOSEPAREN)
-        {
-            while (opBuffer.top() != T_OPENPAREN)
+            Token t = this->scanner.nextToken();
+            if (t == T_NUMBER)
             {
-                int x = numBuffer.top();
-                numBuffer.pop();
-                int y = numBuffer.top();
-                numBuffer.pop();
-
-                Token opToken = opBuffer.top();
-                opBuffer.pop();
-
-                int innerExpression = arithmetic(x, y, opToken);
-                numBuffer.push(innerExpression);
+                numBuffer.push(this->scanner.getNumberValue());
             }
+            else if (t == T_OPENPAREN)
+            {
+                opBuffer.push(t);
+            }
+            else if (t == T_CLOSEPAREN)
+            {
+                while (opBuffer.top() != T_OPENPAREN)
+                {
+                    int x = numBuffer.top();
+                    numBuffer.pop();
+                    int y = numBuffer.top();
+                    numBuffer.pop();
+
+                    Token opToken = opBuffer.top();
+                    opBuffer.pop();
+
+                    int innerExpression = arithmetic(x, y, opToken);
+                    if (innerExpression > INT_MAX)
+                        outOfBoundsError(this->scanner.lineNumber(), innerExpression);
+                    numBuffer.push(innerExpression);
+                }
+                opBuffer.pop();
+            }
+            else if (t == T_NEWLN)
+            {
+                this->scanner.eatToken(t);
+                continue;
+            }
+            else
+            {
+                while (!opBuffer.empty() && hasPrecedence(t, opBuffer.top()))
+                {
+                    int x = numBuffer.top();
+                    numBuffer.pop();
+                    int y = numBuffer.top();
+                    numBuffer.pop();
+
+                    Token opToken = opBuffer.top();
+                    opBuffer.pop();
+
+                    int innerExpression = arithmetic(x, y, opToken);
+                    if (innerExpression > INT_MAX)
+                        outOfBoundsError(this->scanner.lineNumber(), innerExpression);
+                    numBuffer.push(innerExpression);
+                }
+                opBuffer.push(t);
+            }
+            this->scanner.eatToken(t);
+        }
+        while (!opBuffer.empty())
+        {
+            int x = numBuffer.top();
+            numBuffer.pop();
+            int y = numBuffer.top();
+            numBuffer.pop();
+
+            Token opToken = opBuffer.top();
             opBuffer.pop();
+
+            int innerExpression = arithmetic(x, y, opToken);
+            if (innerExpression > INT_MAX)
+                outOfBoundsError(this->scanner.lineNumber(), innerExpression);
+            numBuffer.push(innerExpression);
         }
-        else
+        result += std::to_string(numBuffer.top());
+        if (this->scanner.nextToken() == T_SEMICOLON)
         {
-            while (!opBuffer.empty() && hasPrecedence(t, opBuffer.top()))
-            {
-                int x = numBuffer.top();
-                numBuffer.pop();
-                int y = numBuffer.top();
-                numBuffer.pop();
-
-                Token opToken = opBuffer.top();
-                opBuffer.pop();
-
-                int innerExpression = arithmetic(x, y, opToken);
-                numBuffer.push(innerExpression);
-            }
-            opBuffer.push(t);
+            this->scanner.eatToken(T_SEMICOLON);
+            result += '\n';
         }
-        this->scanner.eatToken(t);
     }
-    while (!opBuffer.empty())
-    {
-        int x = numBuffer.top();
-        numBuffer.pop();
-        int y = numBuffer.top();
-        numBuffer.pop();
-
-        Token opToken = opBuffer.top();
-        opBuffer.pop();
-
-        int innerExpression = arithmetic(x, y, opToken);
-        numBuffer.push(innerExpression);
-    }
-    std::cout << numBuffer.top();
+    std::cout << result;
 }
 
 int Parser::arithmetic(int x, int y, Token opToken)
@@ -385,6 +407,8 @@ int Parser::arithmetic(int x, int y, Token opToken)
     case T_MULTIPLY:
         return y * x;
     case T_DIVIDE:
+        if (!x)
+            divideByZeroError(this->scanner.lineNumber(), y);
         return y / x;
     case T_MODULO:
         return y % x;
