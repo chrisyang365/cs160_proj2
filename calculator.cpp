@@ -42,7 +42,15 @@ Token Scanner::nextToken()
     {
         return this->currToken;
     }
+    char newLine = std::cin.peek();
     char c = (std::cin >> std::ws).peek();
+    if (newLine == '\n')
+    {
+        std::cin >> std::ws;
+        this->currToken = T_NEWLN;
+        this->tokenSet = true;
+        return T_NEWLN;
+    }
     if (c == std::char_traits<char>::eof())
     {
         this->currToken = T_EOF;
@@ -115,8 +123,9 @@ Token Scanner::nextToken()
         this->tokenSet = true;
         return T_SEMICOLON;
     }
-    if (c == '\n')
+    if (newLine == '\n')
     {
+        std::cout << "here";
         char temp;
         std::cin >> std::setw(1) >> temp;
         this->currToken = T_NEWLN;
@@ -338,7 +347,7 @@ void Parser::evalProgram()
                     Token opToken = opBuffer.top();
                     opBuffer.pop();
 
-                    int innerExpression = arithmetic(x, y, opToken);
+                    long innerExpression = arithmetic(x, y, opToken);
                     if (innerExpression > INT_MAX)
                         outOfBoundsError(this->scanner.lineNumber(), innerExpression);
                     numBuffer.push(innerExpression);
@@ -362,7 +371,7 @@ void Parser::evalProgram()
                     Token opToken = opBuffer.top();
                     opBuffer.pop();
 
-                    int innerExpression = arithmetic(x, y, opToken);
+                    long innerExpression = arithmetic(x, y, opToken);
                     if (innerExpression > INT_MAX)
                         outOfBoundsError(this->scanner.lineNumber(), innerExpression);
                     numBuffer.push(innerExpression);
@@ -381,7 +390,7 @@ void Parser::evalProgram()
             Token opToken = opBuffer.top();
             opBuffer.pop();
 
-            int innerExpression = arithmetic(x, y, opToken);
+            long innerExpression = arithmetic(x, y, opToken);
             if (innerExpression > INT_MAX)
                 outOfBoundsError(this->scanner.lineNumber(), innerExpression);
             numBuffer.push(innerExpression);
@@ -396,22 +405,22 @@ void Parser::evalProgram()
     std::cout << result;
 }
 
-int Parser::arithmetic(int x, int y, Token opToken)
+long Parser::arithmetic(int x, int y, Token opToken)
 {
     switch (opToken)
     {
     case T_PLUS:
-        return y + x;
+        return (long)y + x;
     case T_MINUS:
-        return y - x;
+        return (long)y - x;
     case T_MULTIPLY:
-        return y * x;
+        return (long)y * x;
     case T_DIVIDE:
         if (!x)
             divideByZeroError(this->scanner.lineNumber(), y);
-        return y / x;
+        return (long)y / x;
     case T_MODULO:
-        return y % x;
+        return (long)y % x;
     }
 }
 

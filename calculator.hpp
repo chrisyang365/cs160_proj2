@@ -44,9 +44,8 @@ class Parser
     void F();
     void FPrime();
     void evalProgram();
-    int arithmetic(int x, int y, Token opToken);
+    long arithmetic(int x, int y, Token opToken);
     bool hasPrecedence(Token opToken1, Token opToken2);
-
 public:
     void parse();
 
