@@ -26,14 +26,14 @@ end
 # end
 
 doing :parse do
-	# pass "2+4*3+3", ""
-	# pass "2+4mod3+(2+5)", ""
-	# pass "111*22", ""
-	# pass "((((((4+2)*3)+4)/5)mod6)+1)", ""
-	# pass "3+2;5+4", ""
+	pass "2+4*3+3", ""
+	pass "2+4mod3+(2+5)", ""
+	pass "111*22", ""
+	pass "((((((4+2)*3)+4)/5)mod6)+1)", ""
+	pass "3+2;5+4", ""
 	fail "()", "Parse error: found invalid token ) at line 1"
-	# fail "(1+2", "Parse error: expected ) found EOF at line 1"
-	# fail "3++", "Parse error: found invalid token + at line 1"
+	fail "(1+2", "Parse error: expected ) found EOF at line 1"
+	fail "3++", "Parse error: found invalid token + at line 1"
 
 end
 

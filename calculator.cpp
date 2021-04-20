@@ -191,13 +191,13 @@ void Parser::match(Token token)
 {
     if (this->scanner.nextToken() == token)
     {
-        std::cout << "matched token " << tokenToString(token);
+        // std::cout << "matched token " << tokenToString(token);
         this->scanner.eatToken(token);
     }
     else
     {
         // std::cout << "scanner token: " << tokenToString(this->scanner.nextToken());
-        parseError(this->scanner.lineNumber(), token);
+        mismatchError(this->scanner.lineNumber(), token, this->scanner.nextToken());
     }
 }
 
@@ -219,8 +219,8 @@ void Parser::R()
     case T_EOF:
         this->scanner.eatToken(T_EOF);
         break;
-    default:
-        parseError(this->scanner.lineNumber(), this->scanner.nextToken());
+    //default:
+        //parseError(this->scanner.lineNumber(), this->scanner.nextToken());
     }
 }
 
@@ -247,8 +247,8 @@ void Parser::EPrime()
     case T_EOF:
         this->scanner.eatToken(T_EOF);
         break;
-    default:
-        parseError(this->scanner.lineNumber(), this->scanner.nextToken());
+    //default:
+        //parseError(this->scanner.lineNumber(), this->scanner.nextToken());
     }
 }
 
@@ -280,8 +280,8 @@ void Parser::TPrime()
     case T_EOF:
         this->scanner.eatToken(T_EOF);
         break;
-    default:
-        parseError(this->scanner.lineNumber(), this->scanner.nextToken());
+    //default:
+        //parseError(this->scanner.lineNumber(), this->scanner.nextToken());
     }
 }
 
